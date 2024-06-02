@@ -1,0 +1,27 @@
+# Инициализация шины I2C
+bus = smbus2.SMBus(1)
+
+# Инициализация датчика
+sensor = BH1750(bus, BH1750_ADDRESS)
+
+def read_light():
+    # Чтение данных с датчика
+    light_level = sensor.luminance(BH1750.ONCE_HIRES_1)
+    return light_level
+
+def main():
+    try:
+        while True:
+            light_level = read_light()
+            print(f"Light Level: {light_level} lux")
+            # Можно добавить расчет солнечной энергии, исходя из уровня освещенности
+            # Например, солнечная энергия (Вт/м²) приблизительно равна освещенности в люксах / 100
+            solar_energy = light_level / 100
+            print(f"Solar Energy: {solar_energy} W/m²")
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Measurement stopped by User")
+        bus.close()
+
+if __name__ == "__main__":
+    main()
